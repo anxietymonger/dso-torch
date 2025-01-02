@@ -1,0 +1,84 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "dso"
+dynamic = ["version"]
+description = ''
+readme = "README.md"
+requires-python = ">=3.8"
+
+keywords = []
+authors = [
+  { name = "Rhett Li", email = "rhett.ruide.li@gmail.com" },
+]
+classifiers = [
+  "Development Status :: 4 - Beta",
+  "Programming Language :: Python",
+  "Programming Language :: Python :: 3.8",
+  "Programming Language :: Python :: 3.9",
+  "Programming Language :: Python :: 3.10",
+  "Programming Language :: Python :: 3.11",
+  "Programming Language :: Python :: 3.12",
+  "Programming Language :: Python :: Implementation :: CPython",
+  "Programming Language :: Python :: Implementation :: PyPy",
+]
+dependencies = [
+  "cython",
+  "numpy",
+  "numba",
+  "sympy",
+  "pandas",
+  "scikit-learn",
+  "click",
+  "deap",
+  "seaborn",
+  "commentjson",
+  "pyyaml",
+  "prettytable",
+  "torch",
+]
+
+[project.urls]
+Documentation = "https://github.com/Rhett Li/dso#readme"
+Issues = "https://github.com/Rhett Li/dso/issues"
+Source = "https://github.com/Rhett Li/dso"
+
+[tool.hatch.version]
+path = "src/dso/__about__.py"
+
+[tool.hatch.envs.types]
+extra-dependencies = [
+  "mypy>=1.0.0",
+]
+[tool.hatch.envs.types.scripts]
+check = "mypy --install-types --non-interactive {args:src/dso tests}"
+
+[tool.coverage.run]
+source_pkgs = ["dso", "tests"]
+branch = true
+parallel = true
+omit = [
+  "src/dso/__about__.py",
+]
+
+[tool.coverage.paths]
+dso = ["src/dso", "*/dso/src/dso"]
+tests = ["tests", "*/dso/tests"]
+
+[tool.coverage.report]
+exclude_lines = [
+  "no cov",
+  "if __name__ == .__main__.:",
+  "if TYPE_CHECKING:",
+]
+
+[tool.hatch.build.hooks.cython]
+dependencies = ["hatch-cython", "numpy"]
+
+[tool.hatch.build.hooks.cython.options]
+compile_py = false
+
+[tool.ruff]
+line-length = 140
