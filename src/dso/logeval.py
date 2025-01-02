@@ -4,15 +4,13 @@ import warnings
 warnings.filterwarnings('ignore', category=DeprecationWarning)
 warnings.filterwarnings('ignore', category=FutureWarning)
 
-from pkg_resources import resource_filename
 import re
-import glob
 import os
 
 import click
 import pandas as pd
 import seaborn as sns
-import commentjson as json
+import yaml
 from matplotlib import pyplot as plt
 
 class LogEval():
@@ -126,8 +124,8 @@ class LogEval():
     def _get_config(self):
         """Read the experiment's config file."""
 
-        with open(os.path.join(self.save_path, "config.json"), 'r') as f:
-            config = json.load(f)
+        with open(os.path.join(self.save_path, "config.yaml"), 'r') as f:
+            config = yaml.safe_load(f)
 
         return config
 
@@ -143,7 +141,7 @@ class LogEval():
             summary_df.sort_values("seed")
             try:
                 self.metrics["success_rate"] = summary_df["success"].mean()
-            except:
+            except Exception:
                 self.metrics["success_rate"] = 0.0
         except Exception as e:
             self.warnings.append("Can't load summary: {}".format(e))

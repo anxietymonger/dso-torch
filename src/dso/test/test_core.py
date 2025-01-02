@@ -3,7 +3,6 @@
 from pkg_resources import resource_filename
 
 import pytest
-import tensorflow as tf
 import numpy as np
 
 from dso import DeepSymbolicOptimizer
@@ -33,8 +32,8 @@ def cached_results(model, request):
     return [request.param, results]
 
 
-@pytest.mark.parametrize("config", ["config/config_regression.json",
-                                    "config/config_control.json"])
+@pytest.mark.parametrize("config", ["config/config_regression.yaml",
+                                    "config/config_control.yaml"])
 def test_task(model, config):
     """Test that Tasks do not crash for various configs."""
     config = load_config(config)
@@ -46,7 +45,7 @@ def test_task(model, config):
     model.train()
 
 
-@pytest.mark.parametrize("config", ["config/config_regression.json"])
+@pytest.mark.parametrize("config", ["config/config_regression.yaml"])
 def test_model_parity(model, cached_results, config):
     """Compare results with gp meld on to previous set"""
     config = load_config(config)
@@ -76,7 +75,7 @@ def test_model_parity(model, cached_results, config):
     results = np.concatenate([a.flatten() for a in results])
     cached_results = np.concatenate([a.flatten() for a in cached_results])
     assert np.linalg.norm(cached_results, ord=1) > 0
-    
+
     if stringency == "weak":
         results = np.where(results, 1, 0)
         cached_results = np.where(cached_results, 1, 0)

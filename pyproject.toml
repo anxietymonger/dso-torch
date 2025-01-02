@@ -34,7 +34,6 @@ dependencies = [
   "click",
   "deap",
   "seaborn",
-  "commentjson",
   "pyyaml",
   "prettytable",
   "torch",

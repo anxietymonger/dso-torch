@@ -12,7 +12,7 @@ from datetime import datetime
 
 import numpy as np
 import torch
-import commentjson as json
+import yaml
 
 from dso.task import set_task
 from dso.train import Trainer
@@ -128,7 +128,7 @@ class DeepSymbolicOptimizer():
     def set_config(self, config):
         config = load_config(config)
 
-        self.config = defaultdict(dict, config)
+        self.config = config
         self.config_task = self.config["task"]
         self.config_prior = self.config["prior"]
         self.config_logger = self.config["logging"]
@@ -142,8 +142,8 @@ class DeepSymbolicOptimizer():
     def save_config(self):
         # Save the config file
         if self.output_file is not None:
-            path = os.path.join(self.config_experiment["save_path"], "config.json")
-            # With run.py, config.json may already exist. To avoid race
+            path = os.path.join(self.config_experiment["save_path"], "config.yaml")
+            # With run.py, config.yaml may already exist. To avoid race
             # conditions, only record the starting seed. Use a backup seed
             # in case this worker's seed differs.
             backup_seed = self.config_experiment["seed"]
@@ -152,7 +152,7 @@ class DeepSymbolicOptimizer():
                     self.config_experiment["seed"] = self.config_experiment["starting_seed"]
                     del self.config_experiment["starting_seed"]
                 with open(path, "w") as f:
-                    json.dump(self.config, f, indent=3)
+                    yaml.safe_dump(self.config, f)
             self.config_experiment["seed"] = backup_seed
 
     def set_seeds(self):

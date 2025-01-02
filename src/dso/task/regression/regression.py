@@ -132,7 +132,7 @@ class RegressionTask(HierarchicalTask):
         """
         Configure train/test reward metrics.
         """
-        self.threshold = threshold
+        self.threshold = float(threshold)
         self.metric, self.invalid_reward, self.max_reward = make_regression_metric(metric, self.y_train, *metric_params)
         self.extra_metric_test = extra_metric_test
         if extra_metric_test is not None:
