@@ -3,7 +3,7 @@ requires = ["hatchling"]
 build-backend = "hatchling.build"
 
 [project]
-name = "dso-torch"
+name = "dso"
 dynamic = ["version"]
 description = ''
 readme = "README.md"

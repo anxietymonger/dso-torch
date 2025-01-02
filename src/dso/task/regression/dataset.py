@@ -9,7 +9,6 @@ import zlib
 import click
 import pandas as pd
 import numpy as np
-from loguru import logger
 
 from dso.functions import function_map
 
@@ -59,10 +58,8 @@ class BenchmarkDataset(object):
         if root is None:
             root = resource_filename("dso.task", "regression")
         benchmark_path = os.path.join(root, benchmark_source)
-        logger.info(f"{benchmark_path=}")
         benchmark_df = pd.read_csv(benchmark_path, index_col=0, encoding="ISO-8859-1")
         row = benchmark_df.loc[name]
-        logger.info(f"{row=}")
         self.n_input_var = row["variables"]
 
         # Create symbolic expression
@@ -70,7 +67,6 @@ class BenchmarkDataset(object):
 
         # Get dataset specifications
         self.train_spec = self.extract_dataset_specs(row["train_spec"])
-        logger.info(f"{row['test_spec']=}")
         if np.isnan(row["test_spec"]):
             self.test_spec = self.train_spec
         else:
