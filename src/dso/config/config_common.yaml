@@ -124,56 +124,56 @@ prior:
     targets: []
     effectors: []
     relationship: null
-    on: false
+    enabled: false
 
   # Constrains expression length to fall between min_ and max_, inclusive.
   length:
     min_: 4
     max_: 30
-    on: false
+    enabled: false
 
   # Constraints "const" to appear at most max_ times.
   repeat:
     tokens: "const"
     min_: null
     max_: 3
-    on: false
+    enabled: false
 
   # Prevents consecutive inverse unary operators, e.g., log(exp(x)).
   inverse:
-    on: false
+    enabled: false
 
   # Prevents nested trig operators (e.g., sin(1 + cos(x))).
   trig:
-    on: false
+    enabled: false
 
   # Prevents "const" from being the only child, e.g., sin(const) or add(const, const).
   const:
-    on: false
+    enabled: false
 
   # Prevents expressions with no input variables, e.g., sin(1.0 + const).
   no_inputs:
-    on: false
+    enabled: false
 
   # Uniform arity prior: the prior probabilities over arities is uniform.
   uniform_arity:
-    on: false
+    enabled: false
 
   # Soft length prior: expressions are discouraged to have length far from loc.
   soft_length:
     loc: 10
     scale: 5
-    on: false
+    enabled: false
 
   # Prevents the first token if its range does not contain X range and prevents input variable X if its parent's domain does not contain X domain.
   domain_range:
-    on: false
+    enabled: false
 
   # Constraint on the selection of multi-discrete actions.
   multi_discrete:
     dense: false # all action dims are filled
     ordered: false # action dim in ascending order
-    on: false
+    enabled: false
 
 # Postprocessing hyperparameters.
 postprocess:

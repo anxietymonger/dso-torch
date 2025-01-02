@@ -127,8 +127,7 @@ class DeepSymbolicOptimizer():
 
     def set_config(self, config):
         config = load_config(config)
-
-        self.config = config
+        self.config = defaultdict(dict, config)
         self.config_task = self.config["task"]
         self.config_prior = self.config["prior"]
         self.config_logger = self.config["logging"]
@@ -152,7 +151,7 @@ class DeepSymbolicOptimizer():
                     self.config_experiment["seed"] = self.config_experiment["starting_seed"]
                     del self.config_experiment["starting_seed"]
                 with open(path, "w") as f:
-                    yaml.safe_dump(self.config, f)
+                    yaml.safe_dump(dict(self.config), f)
             self.config_experiment["seed"] = backup_seed
 
     def set_seeds(self):

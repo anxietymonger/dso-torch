@@ -52,7 +52,7 @@ def make_prior(library, config_prior):
         for single_prior_args in prior_args:
             # Attempt to build the Prior. Any Prior can fail if it references a
             # Token not in the Library.
-            prior_is_enabled = single_prior_args.pop('on', False)
+            prior_is_enabled = single_prior_args.pop("enabled", False)
             if prior_is_enabled:
                 try:
                     prior = prior_class(library, **single_prior_args)

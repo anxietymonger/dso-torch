@@ -94,25 +94,25 @@ prior:
   length:
     min_: 4
     max_: 64
-    on: true
+    enabled: true
   repeat:
     tokens: "const"
     min_: null
     max_: 3
-    on: true
+    enabled: true
   inverse:
-    on: true
+    enabled: true
   trig:
-    on: true
+    enabled: true
   const:
-    on: true
+    enabled: true
   no_inputs:
-    on: true
+    enabled: true
   uniform_arity:
-    on: true
+    enabled: true
   soft_length:
     loc: 10
     scale: 5
-    on: true
+    enabled: true
   domain_range:
-    on: false
+    enabled: false
