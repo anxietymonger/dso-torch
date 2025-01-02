@@ -3,7 +3,7 @@ requires = ["hatchling"]
 build-backend = "hatchling.build"
 
 [project]
-name = "dso"
+name = "dso-torch"
 dynamic = ["version"]
 description = ''
 readme = "README.md"
@@ -41,9 +41,9 @@ dependencies = [
 ]
 
 [project.urls]
-Documentation = "https://github.com/Rhett Li/dso#readme"
-Issues = "https://github.com/Rhett Li/dso/issues"
-Source = "https://github.com/Rhett Li/dso"
+Documentation = "https://github.com/anxietymonger/dso-torch.git"
+Issues = "https://github.com/anxietymonger/dso-torch/issues"
+Source = "https://github.com/anxietymonger/dso-torch"
 
 [tool.hatch.version]
 path = "src/dso/__about__.py"
