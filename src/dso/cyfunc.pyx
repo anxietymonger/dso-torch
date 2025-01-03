@@ -4,8 +4,6 @@
 '''
 # Uncomment the above lines for cProfile
 
-import numpy as np
-
 from dso.library import StateChecker, Polynomial
 
 # Cython specific C imports

@@ -78,6 +78,7 @@ dependencies = ["hatch-cython", "numpy"]
 
 [tool.hatch.build.hooks.cython.options]
 compile_py = false
+include_numpy = true
 
 [tool.ruff]
 line-length = 140
