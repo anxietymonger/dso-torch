@@ -1,10 +1,7 @@
-"""Defines main training loop for deep symbolic optimization."""
-
 import json
 import time
 from itertools import compress
 
-import torch
 import numpy as np
 
 from dso.program import Program, from_tokens
@@ -12,16 +9,26 @@ from dso.utils import empirical_entropy, get_duration, pad_action_obs_priors
 from dso.memory import Batch
 
 
-torch.manual_seed(0)
-
-
-class Trainer():
-    def __init__(self, policy, policy_optimizer, gp_controller, logger,
-                 n_samples=2000000, batch_size=1000, alpha=0.5,
-                 epsilon=0.05, verbose=True, baseline="R_e",
-                 b_jumpstart=False, early_stopping=True, debug=0,
-                 complexity="token", const_optimizer="scipy", const_params=None):
-
+class Trainer:
+    def __init__(
+        self,
+        policy,
+        policy_optimizer,
+        gp_controller,
+        logger,
+        n_samples=2000000,
+        batch_size=1000,
+        alpha=0.5,
+        epsilon=0.05,
+        verbose=True,
+        baseline="R_e",
+        b_jumpstart=False,
+        early_stopping=True,
+        debug=0,
+        complexity="token",
+        const_optimizer="scipy",
+        const_params=None,
+    ):
         """
         Initializes the main training loop.
 
@@ -93,8 +100,8 @@ class Trainer():
         self.early_stopping = early_stopping
         self.debug = debug
 
-        self.nevals = 0 # Total number of sampled expressions (from RL or GP)
-        self.iteration = 0 # Iteration counter
+        self.nevals = 0  # Total number of sampled expressions (from RL or GP)
+        self.iteration = 0  # Iteration counter
         self.r_best = -np.inf
         self.p_r_best = None
         self.done = False
@@ -116,7 +123,7 @@ class Trainer():
             print("\nDEBUG: Policy parameter means:")
             self.print_var_means()
 
-        ewma = None if self.b_jumpstart else 0.0 # EWMA portion of baseline
+        ewma = None if self.b_jumpstart else 0.0  # EWMA portion of baseline
 
         start_time = time.time()
         if self.verbose:
@@ -150,8 +157,7 @@ class Trainer():
             self.policy.valid_extended_batch = False
             n_extra = self.policy.extended_batch[0]
             if n_extra > 0:
-                extra_programs = [from_tokens(a) for a in
-                                  self.policy.extended_batch[1]]
+                extra_programs = [from_tokens(a) for a in self.policy.extended_batch[1]]
                 # Concatenation is fine because rnn_policy.sample_novel()
                 # already made sure that offline batch and extended batch
                 # are padded to the same trajectory length
@@ -190,10 +196,10 @@ class Trainer():
         controller_programs = programs.copy() if self.logger.save_token_count else None
 
         # Need for Vanilla Policy Gradient (epsilon = null)
-        l           = np.array([len(p.traversal) for p in programs])
-        s           = [p.str for p in programs] # Str representations of Programs
-        on_policy   = np.array([p.originally_on_policy for p in programs])
-        invalid     = np.array([p.invalid for p in programs], dtype=bool)
+        l = np.array([len(p.traversal) for p in programs])
+        s = [p.str for p in programs]  # Str representations of Programs
+        on_policy = np.array([p.originally_on_policy for p in programs])
+        invalid = np.array([p.invalid for p in programs], dtype=bool)
 
         if self.logger.save_positional_entropy:
             positional_entropy = np.apply_along_axis(empirical_entropy, 0, actions)
@@ -226,7 +232,7 @@ class Trainer():
             s = list(compress(s, keep))
             invalid = invalid[keep]
             r = r[keep]
-            programs  = list(compress(programs, keep))
+            programs = list(compress(programs, keep))
             actions = actions[keep, :]
             obs = obs[keep, :, :]
             priors = priors[keep, :, :]
@@ -238,25 +244,23 @@ class Trainer():
         # Compute baseline
         # NOTE: pg_loss = tf.reduce_mean((self.r - self.baseline) * neglogp, name="pg_loss")
         if self.baseline == "ewma_R":
-            ewma = np.mean(r) if ewma is None else self.alpha*np.mean(r) + (1 - self.alpha)*ewma
+            ewma = np.mean(r) if ewma is None else self.alpha * np.mean(r) + (1 - self.alpha) * ewma
             b = ewma
-        elif self.baseline == "R_e": # Default
+        elif self.baseline == "R_e":  # Default
             ewma = -1
             b = quantile
         elif self.baseline == "ewma_R_e":
-            ewma = np.min(r) if ewma is None else self.alpha*quantile + (1 - self.alpha)*ewma
+            ewma = np.min(r) if ewma is None else self.alpha * quantile + (1 - self.alpha) * ewma
             b = ewma
         elif self.baseline == "combined":
-            ewma = np.mean(r) - quantile if ewma is None else self.alpha*(np.mean(r) - quantile) + (1 - self.alpha)*ewma
+            ewma = np.mean(r) - quantile if ewma is None else self.alpha * (np.mean(r) - quantile) + (1 - self.alpha) * ewma
             b = quantile + ewma
 
         # Compute sequence lengths
-        lengths = np.array([min(len(p.traversal), self.policy.max_length)
-                            for p in programs], dtype=np.int32)
+        lengths = np.array([min(len(p.traversal), self.policy.max_length) for p in programs], dtype=np.int32)
 
         # Create the Batch
-        sampled_batch = Batch(actions=actions, obs=obs, priors=priors,
-                              lengths=lengths, rewards=r, on_policy=on_policy)
+        sampled_batch = Batch(actions=actions, obs=obs, priors=priors, lengths=lengths, rewards=r, on_policy=on_policy)
 
         # Update and sample from the priority queue
         summaries = self.policy_optimizer.train_step(b, sampled_batch)
@@ -276,13 +280,30 @@ class Trainer():
                 self.p_r_best.print_stats()
 
         # Collect sub-batch statistics and write output
-        self.logger.save_stats(r_full, l_full, actions_full.cpu().numpy(), s_full,
-                               invalid_full, r, l, actions.cpu().numpy(), s, s_history,
-                               invalid, self.r_best, r_max, ewma, summaries,
-                               self.iteration, b, iteration_walltime,
-                               self.nevals, controller_programs,
-                               positional_entropy, top_samples_per_batch)
-
+        self.logger.save_stats(
+            r_full,
+            l_full,
+            actions_full.cpu().numpy(),
+            s_full,
+            invalid_full,
+            r,
+            l,
+            actions.cpu().numpy(),
+            s,
+            s_history,
+            invalid,
+            self.r_best,
+            r_max,
+            ewma,
+            summaries,
+            self.iteration,
+            b,
+            iteration_walltime,
+            self.nevals,
+            controller_programs,
+            positional_entropy,
+            top_samples_per_batch,
+        )
 
         # Stop if early stopping criteria is met
         if self.early_stopping and self.p_r_best.evaluate.get("success"):
@@ -308,12 +329,12 @@ class Trainer():
         """
 
         state_dict = {
-            "nevals" : self.nevals,
-            "iteration" : self.iteration,
-            "r_best" : self.r_best,
-            "p_r_best_tokens" : self.p_r_best.tokens.tolist() if self.p_r_best is not None else None
+            "nevals": self.nevals,
+            "iteration": self.iteration,
+            "r_best": self.r_best,
+            "p_r_best_tokens": self.p_r_best.tokens.tolist() if self.p_r_best is not None else None,
         }
-        with open(save_path, 'w') as f:
+        with open(save_path, "w") as f:
             json.dump(state_dict, f)
 
         print("Saved Trainer state to {}.".format(save_path))
@@ -323,7 +344,7 @@ class Trainer():
         Load the state of the Trainer.
         """
 
-        with open(load_path, 'r') as f:
+        with open(load_path, "r") as f:
             state_dict = json.load(f)
 
         # Load nevals and iteration from savestate

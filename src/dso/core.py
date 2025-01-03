@@ -1,14 +1,10 @@
-"""Core deep symbolic optimizer construct."""
-
-import warnings
-warnings.filterwarnings("ignore", category=FutureWarning)
-
 import os
 import zlib
-from collections import defaultdict
 import random
-from time import time
+
+from collections import defaultdict
 from datetime import datetime
+from time import time
 
 import numpy as np
 import torch
@@ -21,11 +17,11 @@ from dso.prior import make_prior
 from dso.program import Program
 from dso.config import load_config
 from dso.state_manager import make_state_manager
-
 from dso.policy.policy import make_policy
 from dso.policy_optimizer import make_policy_optimizer
 
-class DeepSymbolicOptimizer():
+
+class DeepSymbolicOptimizer:
     """
     Deep symbolic optimization model. Includes model hyperparameters and
     training configuration.
@@ -56,7 +52,7 @@ class DeepSymbolicOptimizer():
 
         # Generate objects needed for training and set seeds
         self.make_task()
-        self.set_seeds() # Must be called _after_ resetting graph and _after_ setting task
+        self.set_seeds()  # Must be called _after_ resetting graph and _after_ setting task
 
         # Setup logdirs and output files
         self.output_file = self.make_output_file()
@@ -110,14 +106,10 @@ class DeepSymbolicOptimizer():
 
         # Return statistics of best Program
         p = self.trainer.p_r_best
-        result = {"seed" : self.config_experiment["seed"]} # Seed listed first
-        result.update({"r" : p.r})
+        result = {"seed": self.config_experiment["seed"]}  # Seed listed first
+        result.update({"r": p.r})
         result.update(p.evaluate)
-        result.update({
-            "expression" : repr(p.sympy_expr),
-            "traversal" : repr(p),
-            "program" : p
-        })
+        result.update({"expression": repr(p.sympy_expr), "traversal": repr(p), "program": p})
 
         # Save all results available only after all iterations are finished. Also return metrics to be added to the summary file
         results_add = self.logger.save_results(self.trainer.nevals)
@@ -187,11 +179,7 @@ class DeepSymbolicOptimizer():
         return state_manager
 
     def make_trainer(self):
-        trainer = Trainer(self.policy,
-                          self.policy_optimizer,
-                          self.gp_controller,
-                          self.logger,
-                          **self.config_training)
+        trainer = Trainer(self.policy, self.policy_optimizer, self.gp_controller, self.logger, **self.config_training)
         return trainer
 
     def make_logger(self):
@@ -209,6 +197,7 @@ class DeepSymbolicOptimizer():
     def make_gp_controller(self):
         if self.config_gp_meld.pop("run_gp_meld", False):
             from dso.gp.gp_controller import GPController
+
             gp_controller = GPController(self.prior, self.config_prior, **self.config_gp_meld)
         else:
             gp_controller = None
@@ -246,13 +235,9 @@ class DeepSymbolicOptimizer():
         # Generate save path
         task_name = Program.task.name
         if self.config_experiment["exp_name"] is None:
-            save_path = os.path.join(
-                self.config_experiment["logdir"],
-                "_".join([task_name, timestamp]))
+            save_path = os.path.join(self.config_experiment["logdir"], "_".join([task_name, timestamp]))
         else:
-            save_path = os.path.join(
-                self.config_experiment["logdir"],
-                self.config_experiment["exp_name"])
+            save_path = os.path.join(self.config_experiment["logdir"], self.config_experiment["exp_name"])
 
         self.config_experiment["task_name"] = task_name
         self.config_experiment["save_path"] = save_path

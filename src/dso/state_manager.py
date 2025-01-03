@@ -57,9 +57,7 @@ def make_state_manager(config):
     state_manager : StateManager
         The StateManager to be used by the policy.
     """
-    manager_dict = {
-        "hierarchical": HierarchicalStateManager
-    }
+    manager_dict = {"hierarchical": HierarchicalStateManager}
 
     if config is None:
         config = {}
@@ -79,9 +77,7 @@ class HierarchicalStateManager(StateManager):
     observations.
     """
 
-    def __init__(self, observe_parent=True, observe_sibling=True,
-                 observe_action=False, observe_dangling=False, embedding=False,
-                 embedding_size=8):
+    def __init__(self, observe_parent=True, observe_sibling=True, observe_action=False, observe_dangling=False, embedding=False, embedding_size=8):
         super().__init__()
         self.observe_parent = observe_parent
         self.observe_sibling = observe_sibling
@@ -90,8 +86,7 @@ class HierarchicalStateManager(StateManager):
         self.library = Program.library
 
         # Parameter assertions/warnings
-        assert self.observe_action + self.observe_parent + self.observe_sibling + self.observe_dangling > 0, \
-            "Must include at least one observation."
+        assert self.observe_action + self.observe_parent + self.observe_sibling + self.observe_dangling > 0, "Must include at least one observation."
 
         self.embedding = embedding
         self.embedding_size = embedding_size
@@ -102,14 +97,11 @@ class HierarchicalStateManager(StateManager):
         # Create embeddings if needed
         if self.embedding:
             if self.observe_action:
-                self.embedding_layers["action"] = nn.Embedding(
-                    self.library.n_action_inputs, self.embedding_size)
+                self.embedding_layers["action"] = nn.Embedding(self.library.n_action_inputs, self.embedding_size)
             if self.observe_parent:
-                self.embedding_layers["parent"] = nn.Embedding(
-                    self.library.n_parent_inputs, self.embedding_size)
+                self.embedding_layers["parent"] = nn.Embedding(self.library.n_parent_inputs, self.embedding_size)
             if self.observe_sibling:
-                self.embedding_layers["sibling"] = nn.Embedding(
-                    self.library.n_sibling_inputs, self.embedding_size)
+                self.embedding_layers["sibling"] = nn.Embedding(self.library.n_sibling_inputs, self.embedding_size)
 
             # Initialize embeddings with uniform distribution
             for embedding in self.embedding_layers.values():

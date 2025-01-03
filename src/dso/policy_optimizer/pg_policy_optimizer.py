@@ -7,17 +7,17 @@ from dso.policy import Policy
 class PGPolicyOptimizer(PolicyOptimizer):
     """Vanilla policy gradient policy optimizer using PyTorch."""
 
-    def __init__(self,
-            policy: Policy,
-            debug: int = 0,
-            summary: bool = False,
-            optimizer: str = 'adam',
-            learning_rate: float = 0.001,
-            entropy_weight: float = 0.005,
-            entropy_gamma: float = 1.0) -> None:
-
-        super()._init(policy, debug, summary, optimizer, learning_rate,
-                     entropy_weight, entropy_gamma)
+    def __init__(
+        self,
+        policy: Policy,
+        debug: int = 0,
+        summary: bool = False,
+        optimizer: str = "adam",
+        learning_rate: float = 0.001,
+        entropy_weight: float = 0.005,
+        entropy_gamma: float = 1.0,
+    ) -> None:
+        super()._init(policy, debug, summary, optimizer, learning_rate, entropy_weight, entropy_gamma)
 
     def train_step(self, baseline, sampled_batch):
         """Computes loss, trains model, and returns metrics."""
@@ -50,7 +50,7 @@ class PGPolicyOptimizer(PolicyOptimizer):
             "reward_mean": rewards.mean().item(),
             "reward_std": rewards.std().item(),
             "baseline": baseline.item(),
-            "grad_norm": grad_norm.item()
+            "grad_norm": grad_norm.item(),
         }
 
         return metrics

@@ -1,4 +1,3 @@
-"""Controller used to generate distribution over hierarchical, variable-length objects."""
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
@@ -29,16 +28,20 @@ def safe_cross_entropy(p, logq, dim=-1):
 
 
 class RNNPolicy(Policy):
-    def __init__(self, prior, state_manager,
-                 debug=0,
-                 max_length=30,
-                 action_prob_lowerbound=0.0,
-                 max_attempts_at_novel_batch=10,
-                 sample_novel_batch=False,
-                 cell="lstm",
-                 num_layers=1,
-                 num_units=32,
-                 initializer="zeros"):
+    def __init__(
+        self,
+        prior,
+        state_manager,
+        debug=0,
+        max_length=30,
+        action_prob_lowerbound=0.0,
+        max_attempts_at_novel_batch=10,
+        sample_novel_batch=False,
+        cell="lstm",
+        num_layers=1,
+        num_units=32,
+        initializer="zeros",
+    ):
         super().__init__(prior, state_manager, debug, max_length)
 
         self.action_prob_lowerbound = action_prob_lowerbound
@@ -147,11 +150,7 @@ class RNNPolicy(Policy):
                     ob = initial_obs
                     prior = initial_prior
                 else:
-                    next_obs, next_prior, finished = Program.task.get_next_obs(
-                        torch.stack(actions, dim=1).cpu().numpy(),
-                        ob.cpu().numpy(),
-                        finished
-                    )
+                    next_obs, next_prior, finished = Program.task.get_next_obs(torch.stack(actions, dim=1).cpu().numpy(), ob.cpu().numpy(), finished)
                     ob = torch.tensor(next_obs, dtype=torch.float32, device=self.device)
                     prior = torch.tensor(next_prior, dtype=torch.float32, device=self.device)
 
@@ -190,8 +189,7 @@ class RNNPolicy(Policy):
         logits_bounded: torch.Tensor
         """
         probs = F.softmax(logits, dim=-1)
-        probs_bounded = ((1 - self.action_prob_lowerbound) * probs +
-                         self.action_prob_lowerbound / float(self.n_choices))
+        probs_bounded = (1 - self.action_prob_lowerbound) * probs + self.action_prob_lowerbound / float(self.n_choices)
         logits_bounded = torch.log(probs_bounded)
 
         return logits_bounded

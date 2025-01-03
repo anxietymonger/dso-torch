@@ -35,26 +35,26 @@ def train_dso(config):
 
 
 def print_summary(config, runs, messages):
-    text = '\n== EXPERIMENT SETUP START ===========\n'
-    text += 'Task type            : {}\n'.format(config["task"]["task_type"])
+    text = "\n== EXPERIMENT SETUP START ===========\n"
+    text += "Task type            : {}\n".format(config["task"]["task_type"])
     if config["task"]["task_type"] == "regression":
-        text += 'Dataset              : {}\n'.format(config["task"]["dataset"])
-    text += 'Starting seed        : {}\n'.format(config["experiment"]["seed"])
-    text += 'Runs                 : {}\n'.format(runs)
+        text += "Dataset              : {}\n".format(config["task"]["dataset"])
+    text += "Starting seed        : {}\n".format(config["experiment"]["seed"])
+    text += "Runs                 : {}\n".format(runs)
     if len(messages) > 0:
-        text += 'Additional context   :\n'
+        text += "Additional context   :\n"
         for message in messages:
             text += "      {}\n".format(message)
-    text += '== EXPERIMENT SETUP END ============='
+    text += "== EXPERIMENT SETUP END ============="
     print(text)
 
 
 @click.command()
-@click.argument('config_template', default="")
-@click.option('--runs', '--r', default=1, type=int, help="Number of independent runs with different seeds")
-@click.option('--seed', '--s', default=None, type=int, help="Starting seed (overwrites seed in config), incremented for each independent run")
-@click.option('--benchmark', '--b', default=None, type=str, help="Name of benchmark")
-@click.option('--exp_name', default=None, type=str, help="Name of experiment to manually generate log path")
+@click.argument("config_template", default="")
+@click.option("--runs", "-r", default=1, type=int, help="Number of independent runs with different seeds")
+@click.option("--seed", "-s", default=None, type=int, help="Starting seed (overwrites seed in config), incremented for each independent run")
+@click.option("--benchmark", "-b", default=None, type=str, help="Name of benchmark")
+@click.option("--exp_name", default=None, type=str, help="Name of experiment to manually generate log path")
 def main(config_template, runs, seed, benchmark, exp_name):
     """Runs DSO in parallel across multiple seeds using multiprocessing."""
 
@@ -80,9 +80,7 @@ def main(config_template, runs, seed, benchmark, exp_name):
     # Overwrite config seed, if specified
     if seed is not None:
         if config["experiment"]["seed"] is not None:
-            messages.append(
-                "INFO: Replacing config seed {} with command-line seed {}.".format(
-                    config["experiment"]["seed"], seed))
+            messages.append("INFO: Replacing config seed {} with command-line seed {}.".format(config["experiment"]["seed"], seed))
         config["experiment"]["seed"] = seed
 
     # Save starting seed and run command
@@ -115,7 +113,8 @@ def main(config_template, runs, seed, benchmark, exp_name):
         show_count=config["postprocess"]["show_count"],
         show_hof=config["logging"]["hof"] is not None and config["logging"]["hof"] > 0,
         show_pf=config["logging"]["save_pareto_front"],
-        save_plots=config["postprocess"]["save_plots"])
+        save_plots=config["postprocess"]["save_plots"],
+    )
     print("== POST-PROCESS END ===================")
 
 

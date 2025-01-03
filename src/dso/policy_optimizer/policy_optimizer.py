@@ -11,15 +11,16 @@ from dso.policy.policy import Policy
 class PolicyOptimizer(ABC):
     """Abstract class for a policy optimizer using PyTorch."""
 
-    def _init(self,
-            policy: Policy,
-            debug: int = 0,
-            summary: bool = False,
-            optimizer: str = 'adam',
-            learning_rate: float = 0.001,
-            entropy_weight: float = 0.005,
-            entropy_gamma: float = 1.0) -> None:
-
+    def _init(
+        self,
+        policy: Policy,
+        debug: int = 0,
+        summary: bool = False,
+        optimizer: str = "adam",
+        learning_rate: float = 0.001,
+        entropy_weight: float = 0.005,
+        entropy_gamma: float = 1.0,
+    ) -> None:
         self.policy = policy
         self.debug = debug
         self.summary = summary
@@ -28,11 +29,11 @@ class PolicyOptimizer(ABC):
         self.entropy_gamma = entropy_gamma
 
         # Setup optimizer
-        if optimizer == 'adam':
+        if optimizer == "adam":
             self.optimizer = torch.optim.Adam(self.policy.parameters(), lr=learning_rate)
-        elif optimizer == 'rmsprop':
+        elif optimizer == "rmsprop":
             self.optimizer = torch.optim.RMSprop(self.policy.parameters(), lr=learning_rate)
-        elif optimizer == 'sgd':
+        elif optimizer == "sgd":
             self.optimizer = torch.optim.SGD(self.policy.parameters(), lr=learning_rate)
         else:
             raise ValueError(f"Unsupported optimizer: {optimizer}")
@@ -57,11 +58,11 @@ def make_policy_optimizer(policy, policy_optimizer_type, **config_policy_optimiz
 
     if policy_optimizer_type == "pg":
         from dso.policy_optimizer.pg_policy_optimizer import PGPolicyOptimizer
+
         policy_optimizer_class = PGPolicyOptimizer
     else:
         policy_optimizer_class = import_custom_source(policy_optimizer_type)
-        assert issubclass(policy_optimizer_class, Policy), \
-                f"Custom policy {policy_optimizer_class} must subclass dso.policy.Policy."
+        assert issubclass(policy_optimizer_class, Policy), f"Custom policy {policy_optimizer_class} must subclass dso.policy.Policy."
 
     policy_optimizer = policy_optimizer_class(policy, **config_policy_optimizer)
     return policy_optimizer
